@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:mozhi_frontend/constants/app_constants.dart';
 import 'package:mozhi_frontend/models/chat_message.dart';
 import 'package:mozhi_frontend/widgets/chat_bubble.dart';
+import 'package:mozhi_frontend/widgets/app_drawer.dart';
 import 'package:mozhi_frontend/services/auth_service.dart';
+import 'package:mozhi_frontend/screens/auth_screen.dart';
 
 /// HomeScreen - The main chat interface
 ///
@@ -100,77 +102,45 @@ class _HomeScreenState extends State<HomeScreen> {
     ).showSnackBar(const SnackBar(content: Text('Attachments coming soon')));
   }
 
+  /// Navigate to auth screen
+  Future<void> _navigateToAuth({bool isSignUp = true}) async {
+    final result = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(builder: (context) => AuthScreen(isSignUp: isSignUp)),
+    );
+    if (result == true && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Welcome, ${_authService.userName}!')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      // Simplified drawer for now
-      drawer: Drawer(
-        backgroundColor: AppConstants.primaryDarkBlue,
-        child: SafeArea(
-          child: Column(
-            children: [
-              const SizedBox(height: 20),
-              ShaderMask(
-                shaderCallback: (bounds) =>
-                    AppConstants.logoGradient.createShader(bounds),
-                child: const Text(
-                  'M',
-                  style: TextStyle(
-                    fontSize: 48,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 10),
-              const Text(
-                'Mozhii',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                  fontWeight: FontWeight.w300,
-                ),
-              ),
-              const Divider(color: Colors.white24, height: 40),
-              ListTile(
-                leading: const Icon(Icons.chat_outlined, color: Colors.white),
-                title: const Text(
-                  'New Chat',
-                  style: TextStyle(color: Colors.white),
-                ),
-                onTap: () {
-                  Navigator.pop(context);
-                  setState(() => _messages.clear());
-                },
-              ),
-              ListTile(
-                leading: const Icon(
-                  Icons.settings_outlined,
-                  color: Colors.white,
-                ),
-                title: const Text(
-                  'Settings',
-                  style: TextStyle(color: Colors.white),
-                ),
-                onTap: () {
-                  Navigator.pop(context);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Settings coming soon')),
-                  );
-                },
-              ),
-              const Spacer(),
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Text(
-                  'Full drawer coming soon',
-                  style: TextStyle(color: Colors.white.withValues(alpha: 0.5)),
-                ),
-              ),
-            ],
-          ),
-        ),
+      // Full AppDrawer widget
+      drawer: AppDrawer(
+        isLoggedIn: _authService.isLoggedIn,
+        userName: _authService.userName,
+        userInitial: _authService.userInitial,
+        onLoginTap: () => _navigateToAuth(),
+        onNewChat: () {
+          setState(() => _messages.clear());
+        },
+        onSettingsTap: () {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text('Settings coming soon')));
+        },
+        onLogoutTap: () async {
+          await _authService.logout();
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Logged out successfully')),
+            );
+          }
+        },
+        chatHistory: const [], // TODO: Connect to actual chat history
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -263,11 +233,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 )
               : GestureDetector(
-                  onTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Auth screen coming soon')),
-                    );
-                  },
+                  onTap: () => _navigateToAuth(isSignUp: true),
                   child: Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 16,
