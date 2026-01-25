@@ -3,7 +3,7 @@ import 'package:mozhi_frontend/constants/app_constants.dart';
 import 'package:mozhi_frontend/models/chat_message.dart';
 
 /// ChatBubble - Displays a single chat message
-/// 
+///
 /// Features:
 /// - Different styling for user vs AI messages
 /// - Avatar icon (M for AI, user initial for user)
@@ -20,15 +20,13 @@ class ChatBubble extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
         // User messages align right, AI messages align left
-        mainAxisAlignment:
-            message.isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment: message.isUser
+            ? MainAxisAlignment.end
+            : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // AI Avatar (shown on left for AI messages)
-          if (!message.isUser) ...[
-            _buildAIAvatar(),
-            const SizedBox(width: 8),
-          ],
+          if (!message.isUser) ...[_buildAIAvatar(), const SizedBox(width: 8)],
 
           // Message Bubble
           Flexible(
@@ -61,10 +59,7 @@ class ChatBubble extends StatelessWidget {
           ),
 
           // User Avatar (shown on right for user messages)
-          if (message.isUser) ...[
-            const SizedBox(width: 8),
-            _buildUserAvatar(),
-          ],
+          if (message.isUser) ...[const SizedBox(width: 8), _buildUserAvatar()],
         ],
       ),
     );
@@ -123,11 +118,7 @@ class ChatBubble extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(
-          Icons.check,
-          size: 14,
-          color: Colors.white.withValues(alpha: 0.5),
-        ),
+        Icon(Icons.check, size: 14, color: Colors.white.withValues(alpha: 0.5)),
         const SizedBox(width: 8),
         Icon(
           Icons.copy_outlined,
