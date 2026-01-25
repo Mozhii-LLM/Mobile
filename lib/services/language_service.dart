@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// LanguageService - Manages app language/localization settings
-/// 
+///
 /// This is a singleton service that:
 /// - Tracks the current app language
 /// - Persists language preference using SharedPreferences
@@ -48,11 +48,11 @@ class LanguageService extends ChangeNotifier {
   /// Set the app language and save preference
   Future<void> setLanguage(String language) async {
     if (!supportedLanguages.contains(language)) return;
-    
+
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('appLanguage', language);
     _currentLanguage = language;
-    
+
     // Notify all listeners (screens) to rebuild
     notifyListeners();
   }
