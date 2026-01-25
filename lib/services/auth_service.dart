@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// AuthService - Manages user authentication state across the app
-/// 
+///
 /// This is a singleton service that:
 /// - Tracks if user is logged in
 /// - Stores user info (name, email)
@@ -40,7 +40,7 @@ class AuthService extends ChangeNotifier {
   /// Log in the user and save their data
   Future<void> login({required String name, required String email}) async {
     final prefs = await SharedPreferences.getInstance();
-    
+
     // Save to persistent storage
     await prefs.setBool('isLoggedIn', true);
     await prefs.setString('userName', name);
@@ -51,7 +51,7 @@ class AuthService extends ChangeNotifier {
     _userName = name;
     _userEmail = email;
     _userInitial = name.isNotEmpty ? name[0].toUpperCase() : '';
-    
+
     // Notify all listeners (screens) to rebuild
     notifyListeners();
   }
@@ -59,7 +59,7 @@ class AuthService extends ChangeNotifier {
   /// Log out the user and clear their data
   Future<void> logout() async {
     final prefs = await SharedPreferences.getInstance();
-    
+
     // Clear from persistent storage
     await prefs.setBool('isLoggedIn', false);
     await prefs.remove('userName');
@@ -70,7 +70,7 @@ class AuthService extends ChangeNotifier {
     _userName = '';
     _userEmail = '';
     _userInitial = '';
-    
+
     // Notify all listeners (screens) to rebuild
     notifyListeners();
   }
