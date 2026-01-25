@@ -68,14 +68,6 @@ class HomeScreen extends StatelessWidget {
                 color: Colors.white.withValues(alpha: 0.6),
               ),
             ),
-            const SizedBox(height: 40),
-            Text(
-              '🚧 Building from scratch...',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.white.withValues(alpha: 0.5),
-              ),
-            ),
           ],
         ),
       ),
