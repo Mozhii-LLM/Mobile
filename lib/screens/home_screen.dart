@@ -5,6 +5,7 @@ import 'package:mozhi_frontend/widgets/chat_bubble.dart';
 import 'package:mozhi_frontend/widgets/app_drawer.dart';
 import 'package:mozhi_frontend/services/auth_service.dart';
 import 'package:mozhi_frontend/screens/auth_screen.dart';
+import 'package:mozhi_frontend/screens/settings_screen.dart';
 
 /// HomeScreen - The main chat interface
 ///
@@ -118,7 +119,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      // Full AppDrawer widget
+      // Full AppDrawer widget - ChatGPT style
       drawer: AppDrawer(
         isLoggedIn: _authService.isLoggedIn,
         userName: _authService.userName,
@@ -128,9 +129,9 @@ class _HomeScreenState extends State<HomeScreen> {
           setState(() => _messages.clear());
         },
         onSettingsTap: () {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(const SnackBar(content: Text('Settings coming soon')));
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => const SettingsScreen()),
+          );
         },
         onLogoutTap: () async {
           await _authService.logout();
@@ -139,6 +140,16 @@ class _HomeScreenState extends State<HomeScreen> {
               const SnackBar(content: Text('Logged out successfully')),
             );
           }
+        },
+        onTermsTap: () {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Terms of Use coming soon')),
+          );
+        },
+        onPrivacyTap: () {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Privacy Policy coming soon')),
+          );
         },
         chatHistory: const [], // TODO: Connect to actual chat history
       ),
@@ -184,10 +195,41 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // Menu Button
-          IconButton(
-            icon: const Icon(Icons.menu, color: Colors.white, size: 28),
-            onPressed: () => _scaffoldKey.currentState?.openDrawer(),
+          // Menu Button - Double line style like ChatGPT
+          Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () => _scaffoldKey.currentState?.openDrawer(),
+              borderRadius: BorderRadius.circular(8),
+              child: Container(
+                width: 44,
+                height: 44,
+                padding: const EdgeInsets.all(10),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: 20,
+                      height: 2,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(1),
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Container(
+                      width: 14,
+                      height: 2,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(1),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ),
 
           // Logo

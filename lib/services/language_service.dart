@@ -21,14 +21,12 @@ class LanguageService extends ChangeNotifier {
   static const List<String> supportedLanguages = [
     'English',
     'தமிழ் (Tamil)',
-    'සිංහල (Sinhala)',
   ];
 
   // Language codes for API calls
   static const Map<String, String> languageCodes = {
     'English': 'en',
     'தமிழ் (Tamil)': 'ta',
-    'සිංහල (Sinhala)': 'si',
   };
 
   // Public getter for current language
