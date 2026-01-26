@@ -18,10 +18,7 @@ class LanguageService extends ChangeNotifier {
   String _currentLanguage = 'English';
 
   // Supported languages for Mozhii (Tamil LLM focus)
-  static const List<String> supportedLanguages = [
-    'English',
-    'தமிழ் (Tamil)',
-  ];
+  static const List<String> supportedLanguages = ['English', 'தமிழ் (Tamil)'];
 
   // Language codes for API calls
   static const Map<String, String> languageCodes = {
