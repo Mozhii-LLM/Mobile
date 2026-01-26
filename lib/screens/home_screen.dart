@@ -98,9 +98,20 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _showAttachmentOptions() {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Attachments coming soon')));
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      barrierColor: Colors.black.withValues(alpha: 0.5),
+      isScrollControlled: true,
+      builder: (context) => _AttachmentOptionsSheet(
+        onOptionTap: (option) {
+          Navigator.pop(context);
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('$option coming soon')));
+        },
+      ),
+    );
   }
 
   /// Navigate to auth screen
@@ -375,18 +386,24 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          // Attachment Button (+ icon)
-          GestureDetector(
-            onTap: _showAttachmentOptions,
-            child: Container(
-              width: 40,
-              height: 40,
-              margin: const EdgeInsets.only(right: 8, bottom: 4),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.1),
-                shape: BoxShape.circle,
+          // Attachment Button (+ icon) with ripple effect
+          Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: _showAttachmentOptions,
+              borderRadius: BorderRadius.circular(20),
+              splashColor: Colors.white.withValues(alpha: 0.2),
+              highlightColor: Colors.white.withValues(alpha: 0.1),
+              child: Container(
+                width: 40,
+                height: 40,
+                margin: const EdgeInsets.only(right: 8, bottom: 4),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.add, color: Colors.white70, size: 24),
               ),
-              child: const Icon(Icons.add, color: Colors.white70, size: 24),
             ),
           ),
 
@@ -462,6 +479,224 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Attachment options bottom sheet - ChatGPT style
+class _AttachmentOptionsSheet extends StatefulWidget {
+  final Function(String) onOptionTap;
+
+  const _AttachmentOptionsSheet({required this.onOptionTap});
+
+  @override
+  State<_AttachmentOptionsSheet> createState() =>
+      _AttachmentOptionsSheetState();
+}
+
+class _AttachmentOptionsSheetState extends State<_AttachmentOptionsSheet>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _fadeAnimation;
+  late Animation<Offset> _slideAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    );
+    _fadeAnimation = CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeOut,
+    );
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.1), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _animationController,
+            curve: Curves.easeOutCubic,
+          ),
+        );
+    _animationController.forward();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FadeTransition(
+      opacity: _fadeAnimation,
+      child: SlideTransition(
+        position: _slideAnimation,
+        child: Container(
+          margin: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: const Color(0xFF1E1E1E),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Handle bar
+              Padding(
+                padding: const EdgeInsets.only(top: 12),
+                child: Container(
+                  width: 36,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              // Header
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 8,
+                ),
+                child: Row(
+                  children: [
+                    ShaderMask(
+                      shaderCallback: (bounds) =>
+                          AppConstants.logoGradient.createShader(bounds),
+                      child: const Text(
+                        'Mozhii',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // Divider
+              Divider(color: Colors.white.withValues(alpha: 0.1), height: 1),
+              // Options list
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                child: Column(
+                  children: [
+                    _buildOption(
+                      icon: Icons.auto_awesome_outlined,
+                      title: 'Create image',
+                      subtitle: 'Visualize anything',
+                      delay: 0,
+                    ),
+                    _buildOption(
+                      icon: Icons.lightbulb_outline,
+                      title: 'Thinking',
+                      subtitle: 'Think longer for better answers',
+                      delay: 1,
+                    ),
+                    _buildOption(
+                      icon: Icons.rocket_launch_outlined,
+                      title: 'Deep research',
+                      subtitle: 'Get a detailed report',
+                      delay: 2,
+                    ),
+                    _buildOption(
+                      icon: Icons.language,
+                      title: 'Web search',
+                      subtitle: 'Find real-time news and info',
+                      delay: 3,
+                    ),
+                    _buildOption(
+                      icon: Icons.school_outlined,
+                      title: 'Study and learn',
+                      subtitle: 'Learn a new concept',
+                      delay: 4,
+                    ),
+                    _buildOption(
+                      icon: Icons.attach_file_outlined,
+                      title: 'Add files',
+                      subtitle: 'Analyze or summarize',
+                      delay: 5,
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: MediaQuery.of(context).padding.bottom + 8),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildOption({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required int delay,
+  }) {
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0.0, end: 1.0),
+      duration: Duration(milliseconds: 200 + (delay * 50)),
+      curve: Curves.easeOutCubic,
+      builder: (context, value, child) {
+        return Opacity(
+          opacity: value,
+          child: Transform.translate(
+            offset: Offset(0, 10 * (1 - value)),
+            child: child,
+          ),
+        );
+      },
+      child: GestureDetector(
+        onTap: () => widget.onOptionTap(title),
+        behavior: HitTestBehavior.opaque,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+          child: Row(
+            children: [
+              // Icon without background
+              SizedBox(
+                width: 32,
+                height: 32,
+                child: Icon(
+                  icon,
+                  color: Colors.white.withValues(alpha: 0.85),
+                  size: 24,
+                ),
+              ),
+              const SizedBox(width: 16),
+              // Text content
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.5),
+                        fontSize: 13,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

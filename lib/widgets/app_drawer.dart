@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mozhi_frontend/constants/app_constants.dart';
+import 'package:mozhi_frontend/services/language_service.dart';
 
 /// AppDrawer - Navigation drawer with different states
 ///
@@ -528,7 +529,7 @@ class _AppDrawerState extends State<AppDrawer> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            'English',
+                            LanguageService().currentLanguage,
                             style: TextStyle(
                               color: Colors.white.withValues(alpha: 0.5),
                               fontSize: 14,
