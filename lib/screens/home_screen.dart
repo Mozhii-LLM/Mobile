@@ -123,6 +123,7 @@ class _HomeScreenState extends State<HomeScreen> {
       drawer: AppDrawer(
         isLoggedIn: _authService.isLoggedIn,
         userName: _authService.userName,
+        userEmail: _authService.userEmail,
         userInitial: _authService.userInitial,
         onLoginTap: () => _navigateToAuth(),
         onNewChat: () {
@@ -248,27 +249,52 @@ class _HomeScreenState extends State<HomeScreen> {
 
           // Sign up / Profile Button
           _authService.isLoggedIn
-              ? GestureDetector(
-                  onTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Profile menu coming soon')),
-                    );
-                  },
-                  child: Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white, width: 2),
-                      color: AppConstants.buttonBlue,
-                    ),
-                    child: Center(
-                      child: Text(
-                        _authService.userInitial,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
+              ? Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        PageRouteBuilder(
+                          pageBuilder:
+                              (context, animation, secondaryAnimation) =>
+                                  const SettingsScreen(),
+                          transitionsBuilder:
+                              (context, animation, secondaryAnimation, child) {
+                                const begin = Offset(0.0, 1.0);
+                                const end = Offset.zero;
+                                const curve = Curves.easeOutCubic;
+                                var tween = Tween(
+                                  begin: begin,
+                                  end: end,
+                                ).chain(CurveTween(curve: curve));
+                                return SlideTransition(
+                                  position: animation.drive(tween),
+                                  child: child,
+                                );
+                              },
+                          transitionDuration: const Duration(milliseconds: 300),
+                        ),
+                      );
+                    },
+                    borderRadius: BorderRadius.circular(20),
+                    splashColor: Colors.white.withValues(alpha: 0.2),
+                    highlightColor: Colors.white.withValues(alpha: 0.1),
+                    child: Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white, width: 2),
+                        color: AppConstants.buttonBlue,
+                      ),
+                      child: Center(
+                        child: Text(
+                          _authService.userInitial,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                          ),
                         ),
                       ),
                     ),
