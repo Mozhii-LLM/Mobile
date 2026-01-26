@@ -109,9 +109,7 @@ class AppDrawer extends StatelessWidget {
               SizedBox(
                 width: 24,
                 height: 24,
-                child: CustomPaint(
-                  painter: _EditIconPainter(),
-                ),
+                child: CustomPaint(painter: _EditIconPainter()),
               ),
               const SizedBox(width: 12),
               const Text(
@@ -130,8 +128,11 @@ class AppDrawer extends StatelessWidget {
   }
 
   /// Build menu link item
-  Widget _buildMenuLink(BuildContext context, String title,
-      {VoidCallback? onTap}) {
+  Widget _buildMenuLink(
+    BuildContext context,
+    String title, {
+    VoidCallback? onTap,
+  }) {
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -240,10 +241,7 @@ class AppDrawer extends StatelessWidget {
           Expanded(
             child: Text(
               userName,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 15,
-              ),
+              style: const TextStyle(color: Colors.white, fontSize: 15),
               overflow: TextOverflow.ellipsis,
             ),
           ),
@@ -282,9 +280,9 @@ class _EditIconPainter extends CustomPainter {
     path.lineTo(size.width * 0.1, size.height * 0.9);
     path.lineTo(size.width * 0.3, size.height * 0.85);
     path.lineTo(size.width * 0.9, size.height * 0.25);
-    
+
     canvas.drawPath(path, paint);
-    
+
     // Draw small line for pencil tip
     canvas.drawLine(
       Offset(size.width * 0.15, size.height * 0.7),

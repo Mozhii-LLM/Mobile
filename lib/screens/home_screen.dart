@@ -342,34 +342,34 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  /// Build message input area
+  /// Build message input area - ChatGPT style
   Widget _buildInputArea() {
     return Container(
-      margin: const EdgeInsets.all(16),
+      margin: const EdgeInsets.fromLTRB(16, 8, 16, 16),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          // Attachment Button
+          // Attachment Button (+ icon)
           GestureDetector(
             onTap: _showAttachmentOptions,
             child: Container(
-              width: 44,
-              height: 44,
-              margin: const EdgeInsets.only(right: 8),
-              decoration: const BoxDecoration(
-                color: AppConstants.inputBackground,
+              width: 40,
+              height: 40,
+              margin: const EdgeInsets.only(right: 8, bottom: 4),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: const Icon(Icons.add, color: Colors.white70, size: 24),
             ),
           ),
 
-          // Input Field
+          // Input Field with mic and send
           Expanded(
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
               decoration: BoxDecoration(
-                color: AppConstants.inputBackground,
+                color: Colors.white.withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(24),
               ),
               child: Row(
@@ -379,15 +379,15 @@ class _HomeScreenState extends State<HomeScreen> {
                   Expanded(
                     child: TextField(
                       controller: _messageController,
-                      style: const TextStyle(color: Colors.white),
+                      style: const TextStyle(color: Colors.white, fontSize: 16),
                       decoration: const InputDecoration(
-                        hintText: 'Ask anything...',
+                        hintText: 'Ask anything',
                         hintStyle: TextStyle(
                           color: Colors.white38,
-                          fontSize: 14,
+                          fontSize: 16,
                         ),
                         border: InputBorder.none,
-                        contentPadding: EdgeInsets.symmetric(vertical: 12),
+                        contentPadding: EdgeInsets.symmetric(vertical: 10),
                       ),
                       onSubmitted: (_) => _sendMessage(),
                       maxLines: 4,
@@ -395,38 +395,43 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
 
-                  // Voice or Send Button
-                  AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 200),
-                    child: _isTyping
-                        ? GestureDetector(
-                            key: const ValueKey('send'),
-                            onTap: _sendMessage,
-                            child: Container(
-                              width: 36,
-                              height: 36,
-                              margin: const EdgeInsets.only(left: 8, bottom: 4),
-                              decoration: const BoxDecoration(
-                                gradient: AppConstants.logoGradient,
-                                shape: BoxShape.circle,
-                              ),
-                              child: const Icon(
-                                Icons.arrow_upward,
-                                color: Colors.white,
-                                size: 20,
-                              ),
-                            ),
-                          )
-                        : IconButton(
-                            key: const ValueKey('voice'),
-                            icon: const Icon(
-                              Icons.mic_none,
-                              color: Colors.white70,
-                            ),
-                            onPressed: _startVoiceInput,
-                          ),
+                  // Mic button (always visible)
+                  GestureDetector(
+                    onTap: _startVoiceInput,
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: Icon(
+                        Icons.mic_none,
+                        color: Colors.white.withValues(alpha: 0.4),
+                        size: 24,
+                      ),
+                    ),
                   ),
                 ],
+              ),
+            ),
+          ),
+
+          const SizedBox(width: 8),
+
+          // Send Button - dull when empty, blooms instantly when typing
+          GestureDetector(
+            onTap: _isTyping ? _sendMessage : null,
+            child: Container(
+              width: 40,
+              height: 40,
+              margin: const EdgeInsets.only(bottom: 4),
+              decoration: BoxDecoration(
+                gradient: _isTyping ? AppConstants.logoGradient : null,
+                color: _isTyping ? null : Colors.white.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.arrow_upward,
+                color: _isTyping
+                    ? Colors.white
+                    : Colors.white.withValues(alpha: 0.3),
+                size: 22,
               ),
             ),
           ),
