@@ -114,12 +114,61 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  /// Show logout confirmation dialog
+  void _showLogoutConfirmation() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color(0xFF1A1A1A),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: const Text(
+          'Log out',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+        content: const Text(
+          'Are you sure you want to log out?',
+          style: TextStyle(color: Colors.white70),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              'Cancel',
+              style: TextStyle(color: Colors.white.withValues(alpha: 0.7)),
+            ),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(context); // Close dialog
+              await _authService.logout();
+              if (mounted) {
+                setState(() {
+                  _messages.clear();
+                });
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Logged out successfully')),
+                );
+              }
+            },
+            child: Text(
+              'Log out',
+              style: TextStyle(color: Colors.red.shade400),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   /// Navigate to auth screen
   Future<void> _navigateToAuth({bool isSignUp = true}) async {
     final result = await Navigator.of(context).push<bool>(
       MaterialPageRoute(builder: (context) => AuthScreen(isSignUp: isSignUp)),
     );
     if (result == true && mounted) {
+      setState(() {
+        _messages.clear(); // Clear chat history on login
+      });
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Welcome, ${_authService.userName}!')),
       );
@@ -145,14 +194,7 @@ class _HomeScreenState extends State<HomeScreen> {
             MaterialPageRoute(builder: (context) => const SettingsScreen()),
           );
         },
-        onLogoutTap: () async {
-          await _authService.logout();
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Logged out successfully')),
-            );
-          }
-        },
+        onLogoutTap: () => _showLogoutConfirmation(),
         onTermsTap: () {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Terms of Use coming soon')),
