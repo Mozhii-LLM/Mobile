@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:mozhi_frontend/constants/app_constants.dart';
 import 'package:mozhi_frontend/screens/home_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// SplashScreen - The first screen users see when launching the app
 ///
 /// Features:
-/// - Animated welcome message and logo
+/// - Radial gradient background (centered, dark blue theme)
+/// - Logo (M.png) and Text (text.png)
+/// - Animated entrance
 /// - "Get Started" button to proceed
 /// - Remembers if user has seen splash (skips next time)
 class SplashScreen extends StatefulWidget {
@@ -18,10 +19,10 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
-  // Animation controller for fade and slide effects
+  // Animation controller for fade effects
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
-  late Animation<Offset> _slideAnimation;
+  late Animation<double> _scaleAnimation;
 
   @override
   void initState() {
@@ -37,18 +38,17 @@ class _SplashScreenState extends State<SplashScreen>
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _animationController,
-        curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
+        curve: const Interval(0.0, 0.7, curve: Curves.easeOut),
       ),
     );
 
-    // Slide down animation for welcome text
-    _slideAnimation =
-        Tween<Offset>(begin: const Offset(0, -0.3), end: Offset.zero).animate(
-          CurvedAnimation(
-            parent: _animationController,
-            curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
-          ),
-        );
+    // Scale animation for logo
+    _scaleAnimation = Tween<double>(begin: 0.85, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: const Interval(0.0, 0.7, curve: Curves.easeOutBack),
+      ),
+    );
 
     // Start the animation
     _animationController.forward();
@@ -67,171 +67,148 @@ class _SplashScreenState extends State<SplashScreen>
 
     if (mounted) {
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
+        PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) =>
+              const HomeScreen(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(opacity: animation, child: child);
+          },
+          transitionDuration: const Duration(milliseconds: 400),
+        ),
       );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppConstants.primaryDarkBlue,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: Column(
-            children: [
-              const SizedBox(height: 60),
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
 
-              // Welcome Message with slide + fade animation
-              SlideTransition(
-                position: _slideAnimation,
-                child: FadeTransition(
-                  opacity: _fadeAnimation,
-                  child: const Text(
-                    'Welcome to Mozhii',
-                    style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                      letterSpacing: 0.5,
+    return Scaffold(
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          // Radial gradient - centered at top-left, smooth fade from black to dark blue
+          gradient: RadialGradient(
+            center: Alignment(-0.9, -0.9), // Top-left corner
+            radius: 2.0,
+            colors: [
+              Color.fromARGB(255, 0, 4, 8), // Pure black at top-left
+              Color.fromARGB(255, 3, 18, 40), // Very dark blue-black
+              Color.fromARGB(255, 8, 31, 73), // Dark blue
+              Color.fromARGB(255, 14, 39, 98), // Medium dark blue
+              Color.fromARGB(
+                255,
+                13,
+                51,
+                139,
+              ), // Slightly lighter blue at edges
+            ],
+            stops: [0.0, 0.2, 0.45, 0.7, 1.0],
+          ),
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 32.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Logo Section - centered
+                Expanded(
+                  child: Center(
+                    child: FadeTransition(
+                      opacity: _fadeAnimation,
+                      child: ScaleTransition(
+                        scale: _scaleAnimation,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            // M Logo PNG
+                            Transform.translate(
+                              offset: const Offset(0,99),
+                              child: Image.asset(
+                              'assets/images/logo.png',
+                              width: 230,
+                              height: 230,
+                              fit: BoxFit.contain,
+                              ),
+                            ),
+
+                            // Text Logo PNG (Mozhii text) - moved closer to M logo
+                            Transform.translate(
+                              offset: const Offset(0, -60),
+                              child: Image.asset(
+                                'assets/images/text.png',
+                                width: screenWidth * 0.9,
+                                height: 240,
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              ),
 
-              const Spacer(flex: 2),
-
-              // Logo Section with fade animation
-              FadeTransition(
-                opacity: _fadeAnimation,
-                child: Column(
-                  children: [
-                    // Animated Logo Container with gradient background
-                    Container(
-                      width: 120,
-                      height: 120,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        gradient: LinearGradient(
-                          colors: [
-                            AppConstants.gradientBlue1.withValues(alpha: 0.2),
-                            AppConstants.gradientCyan.withValues(alpha: 0.1),
-                          ],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
+                // Get Started Button
+                FadeTransition(
+                  opacity: _fadeAnimation,
+                  child: Container(
+                    width: double.infinity,
+                    height: 56,
+                    margin: const EdgeInsets.only(bottom: 48),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(28),
+                      border: Border.all(
+                        color: Colors.white.withOpacity(0.25),
+                        width: 1.5,
                       ),
-                      child: Center(
-                        // Gradient text effect on logo
-                        child: ShaderMask(
-                          shaderCallback: (bounds) =>
-                              AppConstants.logoGradient.createShader(bounds),
-                          child: const Text(
-                            'M',
-                            style: TextStyle(
-                              fontSize: 72,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
+                      // Subtle background glow
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.white.withOpacity(0.05),
+                          blurRadius: 8,
+                          spreadRadius: 0,
+                        ),
+                      ],
+                    ),
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: _navigateToHome,
+                        borderRadius: BorderRadius.circular(28),
+                        splashColor: Colors.white.withOpacity(0.1),
+                        highlightColor: Colors.white.withOpacity(0.05),
+                        child: Center(
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                'Get Started',
+                                style: TextStyle(
+                                  color: Colors.white.withOpacity(0.95),
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.w500,
+                                  letterSpacing: 0.3,
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Icon(
+                                Icons.arrow_forward,
+                                color: Colors.white.withOpacity(0.95),
+                                size: 20,
+                              ),
+                            ],
                           ),
                         ),
                       ),
                     ),
-
-                    const SizedBox(height: 20),
-
-                    // App Name
-                    const Text(
-                      'Mozhii',
-                      style: TextStyle(
-                        fontFamily: 'serif',
-                        fontSize: 36,
-                        fontWeight: FontWeight.w300,
-                        color: Colors.white,
-                        letterSpacing: 3,
-                      ),
-                    ),
-
-                    const SizedBox(height: 8),
-
-                    // Tagline
-                    Text(
-                      'Your AI Language Companion',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.white.withValues(alpha: 0.6),
-                        letterSpacing: 0.5,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              const Spacer(flex: 3),
-
-              // Get Started Button
-              SizedBox(
-                width: double.infinity,
-                height: 56,
-                child: ElevatedButton(
-                  onPressed: _navigateToHome,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppConstants.buttonBlue,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    elevation: 0,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Get Started',
-                        style: AppConstants.buttonText.copyWith(fontSize: 16),
-                      ),
-                      const SizedBox(width: 8),
-                      const Icon(
-                        Icons.arrow_forward,
-                        color: Colors.white,
-                        size: 20,
-                      ),
-                    ],
                   ),
                 ),
-              ),
-
-              const SizedBox(height: 24),
-
-              // Terms and Privacy Policy links
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Text.rich(
-                  TextSpan(
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.white.withValues(alpha: 0.5),
-                      height: 1.5,
-                    ),
-                    children: const [
-                      TextSpan(text: 'By continuing, you agree to our '),
-                      TextSpan(
-                        text: 'Terms of Service',
-                        style: TextStyle(decoration: TextDecoration.underline),
-                      ),
-                      TextSpan(text: ' and '),
-                      TextSpan(
-                        text: 'Privacy Policy',
-                        style: TextStyle(decoration: TextDecoration.underline),
-                      ),
-                    ],
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-
-              const SizedBox(height: 40),
-            ],
+              ],
+            ),
           ),
         ),
       ),
