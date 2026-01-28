@@ -104,6 +104,7 @@ class _SplashScreenState extends State<SplashScreen>
                 51,
                 139,
               ), // Slightly lighter blue at edges
+              
             ],
             stops: [0.0, 0.2, 0.45, 0.7, 1.0],
           ),
