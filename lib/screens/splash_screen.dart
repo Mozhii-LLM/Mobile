@@ -174,7 +174,7 @@ class _SplashScreenState extends State<SplashScreen>
                         ),
                       ],
                     ),
-                    child: Material(
+                    child: Material( 
                       color: Colors.transparent,
                       child: InkWell(
                         onTap: _navigateToHome,
