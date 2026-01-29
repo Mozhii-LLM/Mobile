@@ -213,9 +213,9 @@ class _HomeScreenState extends State<HomeScreen> {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              AppConstants.primaryDarkBlue,
-              const Color(0xFF002A5C),
-              AppConstants.primaryDarkBlue,
+             Color.fromARGB(255, 0, 4, 8),
+               Color.fromARGB(255, 3, 18, 40), // Very dark blue-black
+              Color.fromARGB(255, 8, 31, 73),
             ],
             stops: const [0.0, 0.5, 1.0],
           ),

@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 ///
 /// Features:
 /// - Radial gradient background (centered, dark blue theme)
-/// - Logo (M.png) and Text (text.png)
+/// - Logo (logo.png) and Text (text.png)
 /// - Animated entrance
 /// - "Get Started" button to proceed
 /// - Remembers if user has seen splash (skips next time)
@@ -98,13 +98,7 @@ class _SplashScreenState extends State<SplashScreen>
               Color.fromARGB(255, 3, 18, 40), // Very dark blue-black
               Color.fromARGB(255, 8, 31, 73), // Dark blue
               Color.fromARGB(255, 14, 39, 98), // Medium dark blue
-              Color.fromARGB(
-                255,
-                13,
-                51,
-                139,
-              ), // Slightly lighter blue at edges
-              
+              Color.fromARGB(255, 13, 51, 139), // Slightly lighter blue at edges
             ],
             stops: [0.0, 0.2, 0.45, 0.7, 1.0],
           ),
@@ -127,12 +121,12 @@ class _SplashScreenState extends State<SplashScreen>
                           children: [
                             // M Logo PNG
                             Transform.translate(
-                              offset: const Offset(0,99),
+                              offset: const Offset(0, 99),
                               child: Image.asset(
-                              'assets/images/logo.png',
-                              width: 230,
-                              height: 230,
-                              fit: BoxFit.contain,
+                                'assets/images/logo.png',
+                                width: 230,
+                                height: 230,
+                                fit: BoxFit.contain,
                               ),
                             ),
 
@@ -175,7 +169,7 @@ class _SplashScreenState extends State<SplashScreen>
                         ),
                       ],
                     ),
-                    child: Material( 
+                    child: Material(
                       color: Colors.transparent,
                       child: InkWell(
                         onTap: _navigateToHome,

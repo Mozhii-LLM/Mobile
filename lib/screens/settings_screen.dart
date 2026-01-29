@@ -53,9 +53,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              AppConstants.primaryDarkBlue,
-              const Color(0xFF002A5C),
-              AppConstants.primaryDarkBlue,
+              Color.fromARGB(255, 0, 4, 8), // Pure black at top-left
+              Color.fromARGB(255, 3, 18, 40), // Very dark blue-black
+              Color.fromARGB(255, 8, 31, 73),
             ],
           ),
         ),
