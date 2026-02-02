@@ -281,7 +281,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       onTap: () {
                         Navigator.pop(context);
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Terms of Use coming soon')),
+                          const SnackBar(
+                            content: Text('Terms of Use coming soon'),
+                          ),
                         );
                       },
                     ),
@@ -297,7 +299,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       onTap: () {
                         Navigator.pop(context);
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Privacy Policy coming soon')),
+                          const SnackBar(
+                            content: Text('Privacy Policy coming soon'),
+                          ),
                         );
                       },
                     ),
@@ -410,10 +414,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildUserDivider() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Divider(
-        color: Colors.white.withValues(alpha: 0.1),
-        height: 1,
-      ),
+      child: Divider(color: Colors.white.withValues(alpha: 0.1), height: 1),
     );
   }
 
@@ -509,7 +510,10 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(width: 12),
             const Text(
               'Mozhii',
-              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ],
         ),
@@ -580,8 +584,8 @@ class _HomeScreenState extends State<HomeScreen> {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-             Color.fromARGB(255, 0, 4, 8),
-               Color.fromARGB(255, 3, 18, 40), // Very dark blue-black
+              Color.fromARGB(255, 0, 4, 8),
+              Color.fromARGB(255, 3, 18, 40), // Very dark blue-black
               Color.fromARGB(255, 8, 31, 73),
             ],
             stops: const [0.0, 0.5, 1.0],
