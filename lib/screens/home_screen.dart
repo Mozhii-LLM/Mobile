@@ -160,6 +160,373 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  /// Show user profile bottom sheet
+  void _showUserProfileSheet() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: const Color(0xFF1A1A1A),
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.85,
+        minChildSize: 0.5,
+        maxChildSize: 0.95,
+        expand: false,
+        builder: (context, scrollController) => Column(
+          children: [
+            // Handle bar and header
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
+              child: Column(
+                children: [
+                  // Handle bar
+                  Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.3),
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  // Header with title and close button
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const SizedBox(width: 40), // Spacer for centering
+                      const Text(
+                        'User Profile',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () => Navigator.pop(context),
+                        child: Container(
+                          width: 32,
+                          height: 32,
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.1),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.close,
+                            color: Colors.white,
+                            size: 18,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 24),
+            // Scrollable content
+            Expanded(
+              child: ListView(
+                controller: scrollController,
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                children: [
+                  // Profile header with avatar
+                  _buildProfileHeader(),
+                  const SizedBox(height: 32),
+                  // Account section
+                  _buildUserSectionHeader('Account'),
+                  const SizedBox(height: 8),
+                  _buildUserSettingsCard([
+                    _buildUserSettingsItem(
+                      icon: Icons.mail_outline,
+                      title: 'Email',
+                      trailing: Text(
+                        _authService.userEmail,
+                        style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.5),
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                  ]),
+                  const SizedBox(height: 24),
+                  // App section
+                  _buildUserSectionHeader('App'),
+                  const SizedBox(height: 8),
+                  _buildUserSettingsCard([
+                    _buildUserSettingsItem(
+                      icon: Icons.info_outline,
+                      title: 'About Mozhii',
+                      trailing: Icon(
+                        Icons.chevron_right,
+                        color: Colors.white.withValues(alpha: 0.3),
+                        size: 20,
+                      ),
+                      onTap: () {
+                        Navigator.pop(context);
+                        _showAboutDialog();
+                      },
+                    ),
+                    _buildUserDivider(),
+                    _buildUserSettingsItem(
+                      icon: Icons.description_outlined,
+                      title: 'Terms of Use',
+                      trailing: Icon(
+                        Icons.chevron_right,
+                        color: Colors.white.withValues(alpha: 0.3),
+                        size: 20,
+                      ),
+                      onTap: () {
+                        Navigator.pop(context);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Terms of Use coming soon')),
+                        );
+                      },
+                    ),
+                    _buildUserDivider(),
+                    _buildUserSettingsItem(
+                      icon: Icons.privacy_tip_outlined,
+                      title: 'Privacy Policy',
+                      trailing: Icon(
+                        Icons.chevron_right,
+                        color: Colors.white.withValues(alpha: 0.3),
+                        size: 20,
+                      ),
+                      onTap: () {
+                        Navigator.pop(context);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Privacy Policy coming soon')),
+                        );
+                      },
+                    ),
+                  ]),
+                  const SizedBox(height: 32),
+                  // Logout button
+                  _buildUserLogoutButton(),
+                  const SizedBox(height: 40),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Profile header with avatar, name, email
+  Widget _buildProfileHeader() {
+    return Column(
+      children: [
+        // Large avatar
+        Container(
+          width: 80,
+          height: 80,
+          decoration: const BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: AppConstants.logoGradient,
+          ),
+          child: Center(
+            child: Text(
+              _authService.userInitial,
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 32,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 16),
+        // User name
+        Text(
+          _authService.userName,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 4),
+        // Email as subtitle
+        Text(
+          _authService.userEmail,
+          style: TextStyle(
+            color: Colors.white.withValues(alpha: 0.5),
+            fontSize: 14,
+          ),
+        ),
+        const SizedBox(height: 16),
+        // Edit profile button
+        OutlinedButton(
+          onPressed: () {
+            Navigator.pop(context);
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Edit profile coming soon')),
+            );
+          },
+          style: OutlinedButton.styleFrom(
+            foregroundColor: Colors.white,
+            side: BorderSide(color: Colors.white.withValues(alpha: 0.3)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+          ),
+          child: const Text('Edit profile'),
+        ),
+      ],
+    );
+  }
+
+  /// Section header text for user profile sheet
+  Widget _buildUserSectionHeader(String title) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 4),
+      child: Text(
+        title,
+        style: TextStyle(
+          color: Colors.white.withValues(alpha: 0.5),
+          fontSize: 13,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+    );
+  }
+
+  /// Card container for user settings items
+  Widget _buildUserSettingsCard(List<Widget> children) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(children: children),
+    );
+  }
+
+  /// Divider for user settings
+  Widget _buildUserDivider() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Divider(
+        color: Colors.white.withValues(alpha: 0.1),
+        height: 1,
+      ),
+    );
+  }
+
+  /// Settings item for user profile sheet
+  Widget _buildUserSettingsItem({
+    required IconData icon,
+    required String title,
+    Widget? trailing,
+    VoidCallback? onTap,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          child: Row(
+            children: [
+              Icon(icon, color: Colors.white, size: 22),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Text(
+                  title,
+                  style: const TextStyle(color: Colors.white, fontSize: 16),
+                ),
+              ),
+              if (trailing != null) trailing,
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Logout button for user profile sheet
+  Widget _buildUserLogoutButton() {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () {
+          Navigator.pop(context);
+          _showLogoutConfirmation();
+        },
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          decoration: BoxDecoration(
+            color: Colors.red.withValues(alpha: 0.15),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.logout, color: Colors.red.shade400, size: 20),
+              const SizedBox(width: 8),
+              Text(
+                'Log out',
+                style: TextStyle(
+                  color: Colors.red.shade400,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Show about dialog
+  void _showAboutDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color(0xFF1A1A1A),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Row(
+          children: [
+            ShaderMask(
+              shaderCallback: (bounds) =>
+                  AppConstants.logoGradient.createShader(bounds),
+              child: const Text(
+                'M',
+                style: TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            const Text(
+              'Mozhii',
+              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+        content: const Text(
+          'Tamil AI Assistant\n\nVersion 1.0.0\n\nMozhii helps you communicate and learn in Tamil with the power of AI.',
+          style: TextStyle(color: Colors.white70),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Close', style: TextStyle(color: Colors.white70)),
+          ),
+        ],
+      ),
+    );
+  }
+
   /// Navigate to auth screen
   Future<void> _navigateToAuth({bool isSignUp = true}) async {
     final result = await Navigator.of(context).push<bool>(
@@ -306,28 +673,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   color: Colors.transparent,
                   child: InkWell(
                     onTap: () {
-                      Navigator.of(context).push(
-                        PageRouteBuilder(
-                          pageBuilder:
-                              (context, animation, secondaryAnimation) =>
-                                  const SettingsScreen(),
-                          transitionsBuilder:
-                              (context, animation, secondaryAnimation, child) {
-                                const begin = Offset(0.0, 1.0);
-                                const end = Offset.zero;
-                                const curve = Curves.easeOutCubic;
-                                var tween = Tween(
-                                  begin: begin,
-                                  end: end,
-                                ).chain(CurveTween(curve: curve));
-                                return SlideTransition(
-                                  position: animation.drive(tween),
-                                  child: child,
-                                );
-                              },
-                          transitionDuration: const Duration(milliseconds: 300),
-                        ),
-                      );
+                      _showUserProfileSheet();
                     },
                     borderRadius: BorderRadius.circular(20),
                     splashColor: Colors.white.withValues(alpha: 0.2),

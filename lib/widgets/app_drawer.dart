@@ -379,8 +379,9 @@ class _AppDrawerState extends State<AppDrawer> {
       color: Colors.transparent,
       child: InkWell(
         onTap: () {
-          // Show profile options
-          _showProfileMenu(context);
+          // Go to settings screen
+          Navigator.pop(context);
+          widget.onSettingsTap?.call();
         },
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -468,7 +469,7 @@ class _AppDrawerState extends State<AppDrawer> {
                     children: [
                       const SizedBox(width: 40), // Spacer for centering
                       const Text(
-                        'Settings',
+                        'User Profile',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 18,

@@ -85,9 +85,7 @@ class _SplashScreenState extends State<SplashScreen>
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
+      body: DecoratedBox(
         decoration: const BoxDecoration(
           // Radial gradient - centered at top-left, smooth fade from black to dark blue
           gradient: RadialGradient(
@@ -95,15 +93,23 @@ class _SplashScreenState extends State<SplashScreen>
             radius: 2.0,
             colors: [
               Color.fromARGB(255, 0, 4, 8), // Pure black at top-left
+              Color.fromARGB(255, 1, 8, 18),
+              Color.fromARGB(255, 2, 12, 28),
               Color.fromARGB(255, 3, 18, 40), // Very dark blue-black
+              Color.fromARGB(255, 5, 24, 55),
               Color.fromARGB(255, 8, 31, 73), // Dark blue
+              Color.fromARGB(255, 11, 35, 85),
               Color.fromARGB(255, 14, 39, 98), // Medium dark blue
+              Color.fromARGB(255, 13, 45, 118),
               Color.fromARGB(255, 13, 51, 139), // Slightly lighter blue at edges
             ],
-            stops: [0.0, 0.2, 0.45, 0.7, 1.0],
+            stops: [0.0, 0.08, 0.15, 0.25, 0.35, 0.5, 0.65, 0.8, 0.9, 1.0],
           ),
         ),
-        child: SafeArea(
+        child: SizedBox(
+          width: double.infinity,
+          height: double.infinity,
+          child: SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 32.0),
             child: Column(
@@ -205,6 +211,7 @@ class _SplashScreenState extends State<SplashScreen>
               ],
             ),
           ),
+        ),
         ),
       ),
     );
